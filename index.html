@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hackathon Competition Timer</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        height: 100vh;
+        background: url("faculty.jpg") center/cover no-repeat;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .overlay {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      .container {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: white;
+      }
+
+      h1 {
+        font-size: 55px;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        color: #ddd;
+        margin-bottom: 50px;
+      }
+
+      .timer {
+        display: flex;
+        gap: 40px;
+        justify-content: center;
+      }
+
+      .circle {
+        position: relative;
+        width: 180px;
+        height: 180px;
+      }
+
+      svg {
+        width: 180px;
+        height: 180px;
+        transform: rotate(-90deg);
+      }
+
+      circle {
+        fill: none;
+        stroke-width: 10;
+      }
+
+      .bg {
+        stroke: #333;
+      }
+
+      .progress {
+        stroke: #00ffd5;
+        stroke-dasharray: 440;
+        stroke-dashoffset: 440;
+        transition: 1s linear;
+      }
+
+      .time {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+      }
+
+      .time span {
+        font-size: 40px;
+        font-weight: bold;
+      }
+
+      .label {
+        color: #ccc;
+      }
+
+      #status {
+        margin-top: 40px;
+        font-size: 28px;
+        color: #00ffd5;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="overlay"></div>
+
+    <div class="container">
+      <h1>Hackathon 2026</h1>
+      <h2>Competition Time Remaining</h2>
+
+      <div class="timer">
+        <!-- Hours -->
+
+        <div class="circle">
+          <svg>
+            <circle cx="90" cy="90" r="70" class="bg" />
+            <circle cx="90" cy="90" r="70" class="progress" id="hCircle" />
+          </svg>
+
+          <div class="time">
+            <span id="hours">2</span>
+            <div class="label">Hours</div>
+          </div>
+        </div>
+
+        <!-- Minutes -->
+
+        <div class="circle">
+          <svg>
+            <circle cx="90" cy="90" r="70" class="bg" />
+            <circle cx="90" cy="90" r="70" class="progress" id="mCircle" />
+          </svg>
+
+          <div class="time">
+            <span id="minutes">0</span>
+            <div class="label">Minutes</div>
+          </div>
+        </div>
+
+        <!-- Seconds -->
+
+        <div class="circle">
+          <svg>
+            <circle cx="90" cy="90" r="70" class="bg" />
+            <circle cx="90" cy="90" r="70" class="progress" id="sCircle" />
+          </svg>
+
+          <div class="time">
+            <span id="seconds">0</span>
+            <div class="label">Seconds</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="status"></div>
+    </div>
+
+    <script>
+      /////////////////////////////
+      // CONFIGURATION
+      /////////////////////////////
+
+      const startDate = new Date("April 09, 2026 16:52:00").getTime();
+      const duration = 2 * 60 * 60 * 1000; // 2 hours
+
+      /////////////////////////////
+
+      const circleLength = 440;
+
+      setInterval(function () {
+        const now = new Date().getTime();
+
+        if (now < startDate) {
+          document.getElementById("status").innerHTML =
+            "⏳ Waiting for competition start";
+          return;
+        }
+
+        const endDate = startDate + duration;
+        const remaining = endDate - now;
+
+        if (remaining <= 0) {
+          document.getElementById("hours").innerHTML = 0;
+          document.getElementById("minutes").innerHTML = 0;
+          document.getElementById("seconds").innerHTML = 0;
+
+          document.getElementById("status").innerHTML =
+            "✅ Competition Finished";
+
+          return;
+        }
+
+        const h = Math.floor(remaining / (1000 * 60 * 60));
+        const m = Math.floor((remaining % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((remaining % (1000 * 60)) / 1000);
+
+        document.getElementById("hours").innerHTML = h;
+        document.getElementById("minutes").innerHTML = m;
+        document.getElementById("seconds").innerHTML = s;
+
+        // progress circles
+
+        document.getElementById("hCircle").style.strokeDashoffset =
+          circleLength - (h / 2) * circleLength;
+
+        document.getElementById("mCircle").style.strokeDashoffset =
+          circleLength - (m / 60) * circleLength;
+
+        document.getElementById("sCircle").style.strokeDashoffset =
+          circleLength - (s / 60) * circleLength;
+
+        document.getElementById("status").innerHTML = "🚀 Competition Running";
+      }, 1000);
+    </script>
+  </body>
+</html>
